@@ -5,7 +5,7 @@ import config from './config';
 
 const app: express.Application = express();
 
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 
 app.get('/', function (req, res) {
   res.send('Hello World!');
