@@ -2,10 +2,12 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import apiRouter from './controllers';
 import config from './config';
+import cors from 'cors';
 
 const app: express.Application = express();
 
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+app.use(cors());
 
 app.get('/', function (req, res) {
   res.send('Hello World!');

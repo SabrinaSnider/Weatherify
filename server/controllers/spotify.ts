@@ -7,12 +7,14 @@ const router = express.Router();
 
 router.get('/login', function(req, res) {
   console.log("I have ran")
-  res.redirect('https://accounts.spotify.com/authorize?' +
+  const url = 'https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       client_id: config.client_id,
       response_type: 'code',
       redirect_uri: "/",
-    }));
+    });
+
+  res.send({ redirect: url });
 });
 
 router.get('/test', function(req, res) {

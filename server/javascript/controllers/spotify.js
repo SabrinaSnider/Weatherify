@@ -5,16 +5,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var querystring_1 = __importDefault(require("querystring"));
+var config_1 = __importDefault(require("../config"));
 // Initialize the router
 var router = express_1.default.Router();
 router.get('/login', function (req, res) {
     console.log("I have ran");
-    res.redirect('https://accounts.spotify.com/authorize?' +
+    var url = 'https://accounts.spotify.com/authorize?' +
         querystring_1.default.stringify({
-            client_id: "a9d6d9b01fe040768d125261b8d2134c",
+            client_id: config_1.default.client_id,
             response_type: 'code',
             redirect_uri: "/",
-        }));
+        });
+    res.send({ redirect: url });
 });
 router.get('/test', function (req, res) {
     res.send("spoofy");
