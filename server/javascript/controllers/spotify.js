@@ -8,8 +8,7 @@ var querystring_1 = __importDefault(require("querystring"));
 var config_1 = __importDefault(require("../config"));
 // Initialize the router
 var router = express_1.default.Router();
-router.get('/login', function (req, res) {
-    console.log("I have ran");
+router.get('/auth', function (req, res) {
     var url = 'https://accounts.spotify.com/authorize?' +
         querystring_1.default.stringify({
             client_id: config_1.default.client_id,

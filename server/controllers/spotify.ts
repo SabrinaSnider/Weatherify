@@ -5,8 +5,7 @@ import config from '../config'
 // Initialize the router
 const router = express.Router();
 
-router.get('/login', function(req, res) {
-  console.log("I have ran")
+router.get('/auth', function(req, res) {
   const url = 'https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       client_id: config.client_id,
