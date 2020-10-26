@@ -13,7 +13,10 @@ export class SpotifyAuthComponent implements OnInit {
     console.log("hello!");
     this.http
       .get("http://localhost:3000/api/spotify/auth")
-      .subscribe((json) => console.log(json));
+      .subscribe((json) => {
+        console.log(json, json["redirect"]);
+        window.location.href = json["redirect"];
+      });
   }
 
   ngOnInit() {}
