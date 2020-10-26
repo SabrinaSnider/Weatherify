@@ -13,12 +13,12 @@ router.get('/auth', function (req, res) {
         querystring_1.default.stringify({
             client_id: config_1.default.client_id,
             response_type: 'code',
-            redirect_uri: "/",
+            redirect_uri: 'http://localhost:4200/',
         });
     res.send({ redirect: url });
 });
 router.get('/test', function (req, res) {
-    res.send("spoofy");
+    res.send('spoofy');
 });
 /*
 Spotify auth tutorial:

@@ -1,23 +1,24 @@
 import express from 'express';
 import querystring from 'querystring';
-import config from '../config'
+import config from '../config';
 
 // Initialize the router
 const router = express.Router();
 
-router.get('/auth', function(req, res) {
-  const url = 'https://accounts.spotify.com/authorize?' +
+router.get('/auth', function (req, res) {
+  const url =
+    'https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       client_id: config.client_id,
       response_type: 'code',
-      redirect_uri: "/",
+      redirect_uri: 'http://localhost:4200/',
     });
 
   res.send({ redirect: url });
 });
 
-router.get('/test', function(req, res) {
-  res.send("spoofy")
+router.get('/test', function (req, res) {
+  res.send('spoofy');
 });
 
 /*
