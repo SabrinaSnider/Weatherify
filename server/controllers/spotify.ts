@@ -1,5 +1,6 @@
 import express from 'express';
 import querystring from 'querystring';
+import axios from 'axios';
 import config from '../config';
 
 // Initialize the router
@@ -15,6 +16,20 @@ router.get('/auth', function (req, res) {
     });
 
   res.send({ redirect: url });
+});
+
+router.post('/token', async function (req, res) {
+  const tokenData = await axios({
+    method: 'post',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    url: 'https://accounts.spotify.com/api/token',
+    data: {
+      grant_type: 'authorization_code',
+      code: req.body.code,
+      redirect_uri: 'http://localhost:4200/', // used for validation
+    },
+  });
+  res.send(tokenData);
 });
 
 router.get('/test', function (req, res) {
