@@ -75,18 +75,13 @@ router.post('/token', function (req, res) {
                             },
                         })
                             .then(function (response) {
-                            console.log(response);
-                            res.send({ success: 'test' });
+                            res.send(response['data']);
                         })
                             .catch(function (error) {
-                            console.log('errored:', error);
                             res.send({ error: 'Access token could not be obtained.' });
                         })];
                 case 1:
                     _a.sent();
-                    console.log('encoded is', authorization);
-                    console.log('token is', req.body.code);
-                    console.log('config', config_1.default.client_id, config_1.default.client_secret);
                     return [2 /*return*/];
             }
         });

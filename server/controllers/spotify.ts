@@ -37,17 +37,11 @@ router.post('/token', async function (req, res) {
     },
   })
     .then((response) => {
-      console.log(response);
-      res.send({ success: 'test' });
+      res.send(response['data']);
     })
     .catch((error) => {
-      console.log('errored:', error);
       res.send({ error: 'Access token could not be obtained.' });
     });
-
-  console.log('encoded is', authorization);
-  console.log('token is', req.body.code);
-  console.log('config', config.client_id, config.client_secret);
 });
 
 router.get('/test', function (req, res) {
