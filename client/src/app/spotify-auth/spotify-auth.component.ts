@@ -8,10 +8,18 @@ import { ActivatedRoute } from "@angular/router";
   styleUrls: ["./spotify-auth.component.scss"],
 })
 export class SpotifyAuthComponent implements OnInit {
+  code: string = undefined;
+  token: string = undefined;
   constructor(private http: HttpClient, private route: ActivatedRoute) {}
 
-  hello(): void {
-    console.log("hello!");
+  ngOnInit() {
+    if (this.route.snapshot.queryParams.code) {
+      this.code = this.route.snapshot.queryParams.code;
+    }
+    console.log("code", this.code);
+  }
+
+  login(): void {
     this.http
       .get("http://localhost:3000/api/spotify/auth")
       .subscribe((json) => {
@@ -20,7 +28,11 @@ export class SpotifyAuthComponent implements OnInit {
       });
   }
 
-  ngOnInit() {
-    console.log(this.route.snapshot.queryParams);
+  getToken(): void {
+    this.http
+      .post("http://localhost:3000/api/spotify/token", { code: this.code })
+      .subscribe((json) => {
+        console.log(json);
+      });
   }
 }

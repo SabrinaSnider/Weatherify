@@ -76,11 +76,11 @@ router.post('/token', function (req, res) {
                         })
                             .then(function (response) {
                             console.log(response);
-                            res.send('test');
+                            res.send({ success: 'test' });
                         })
                             .catch(function (error) {
                             console.log('errored:', error);
-                            res.send('Access token could not be obtained.');
+                            res.send({ error: 'Access token could not be obtained.' });
                         })];
                 case 1:
                     _a.sent();

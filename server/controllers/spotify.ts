@@ -38,11 +38,11 @@ router.post('/token', async function (req, res) {
   })
     .then((response) => {
       console.log(response);
-      res.send('test');
+      res.send({ success: 'test' });
     })
     .catch((error) => {
       console.log('errored:', error);
-      res.send('Access token could not be obtained.');
+      res.send({ error: 'Access token could not be obtained.' });
     });
 
   console.log('encoded is', authorization);
