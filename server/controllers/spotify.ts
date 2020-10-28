@@ -19,9 +19,14 @@ router.get('/auth', function (req, res) {
 });
 
 router.post('/token', async function (req, res) {
+  const authorization = btoa(`${config.client_id}:${config.client_secret}`);
+  // need to add header params
   const tokenData = await axios({
     method: 'post',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${authorization}`,
+    },
     url: 'https://accounts.spotify.com/api/token',
     data: {
       grant_type: 'authorization_code',
