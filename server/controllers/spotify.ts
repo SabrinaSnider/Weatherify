@@ -19,22 +19,35 @@ router.get('/auth', function (req, res) {
 });
 
 router.post('/token', async function (req, res) {
-  const authorization = btoa(`${config.client_id}:${config.client_secret}`);
-  // need to add header params
-  const tokenData = await axios({
+  const authorization = Buffer.from(
+    `${config.client_id}:${config.client_secret}`
+  ).toString('base64');
+
+  await axios({
     method: 'post',
     headers: {
       'content-type': 'application/x-www-form-urlencoded',
       Authorization: `Basic ${authorization}`,
     },
     url: 'https://accounts.spotify.com/api/token',
-    data: {
+    params: {
       grant_type: 'authorization_code',
       code: req.body.code,
-      redirect_uri: 'http://localhost:4200/', // used for validation
+      redirect_uri: 'http://localhost:4200/',
     },
-  });
-  res.send(tokenData);
+  })
+    .then((response) => {
+      console.log(response);
+      res.send('test');
+    })
+    .catch((error) => {
+      console.log('errored:', error);
+      res.send('Access token could not be obtained.');
+    });
+
+  console.log('encoded is', authorization);
+  console.log('token is', req.body.code);
+  console.log('config', config.client_id, config.client_secret);
 });
 
 router.get('/test', function (req, res) {
