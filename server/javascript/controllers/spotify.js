@@ -40,49 +40,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
-var querystring_1 = __importDefault(require("querystring"));
-var axios_1 = __importDefault(require("axios"));
+var spotify_web_api_node_1 = __importDefault(require("spotify-web-api-node"));
 var config_1 = __importDefault(require("../config"));
 // Initialize the router
 var router = express_1.default.Router();
+// Initialize the Spotify API
+var scopes = ['user-read-private', 'user-read-email'];
+var spotifyApi = new spotify_web_api_node_1.default({
+    clientId: config_1.default.client_id,
+    clientSecret: config_1.default.client_secret,
+    redirectUri: 'http://localhost:4200/',
+});
 router.get('/auth', function (req, res) {
-    var url = 'https://accounts.spotify.com/authorize?' +
-        querystring_1.default.stringify({
-            client_id: config_1.default.client_id,
-            response_type: 'code',
-            redirect_uri: 'http://localhost:4200/',
-        });
+    var url = spotifyApi.createAuthorizeURL(scopes, 'enter state here');
     res.send({ redirect: url });
 });
 router.post('/token', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var authorization;
+        var data, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    authorization = Buffer.from(config_1.default.client_id + ":" + config_1.default.client_secret).toString('base64');
-                    return [4 /*yield*/, axios_1.default({
-                            method: 'post',
-                            headers: {
-                                'content-type': 'application/x-www-form-urlencoded',
-                                Authorization: "Basic " + authorization,
-                            },
-                            url: 'https://accounts.spotify.com/api/token',
-                            params: {
-                                grant_type: 'authorization_code',
-                                code: req.body.code,
-                                redirect_uri: 'http://localhost:4200/',
-                            },
-                        })
-                            .then(function (response) {
-                            res.send(response['data']);
-                        })
-                            .catch(function (error) {
-                            res.send({ error: 'Access token could not be obtained.' });
-                        })];
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, spotifyApi.authorizationCodeGrant(req.body.code)];
                 case 1:
-                    _a.sent();
-                    return [2 /*return*/];
+                    data = (_a.sent()).body;
+                    console.log('The token expires in ' + data['expires_in']);
+                    console.log('The access token is ' + data['access_token']);
+                    console.log('The refresh token is ' + data['refresh_token']);
+                    // Set the access token on the API object to use it in later calls
+                    spotifyApi.setAccessToken(data['access_token']);
+                    spotifyApi.setRefreshToken(data['refresh_token']);
+                    res.send(data);
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_1 = _a.sent();
+                    res.send({ error: err_1 });
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
             }
         });
     });

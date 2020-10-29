@@ -1,47 +1,38 @@
 import express from 'express';
-import querystring from 'querystring';
-import axios from 'axios';
+import SpotifyWebApi from 'spotify-web-api-node';
 import config from '../config';
 
 // Initialize the router
 const router = express.Router();
 
-router.get('/auth', function (req, res) {
-  const url =
-    'https://accounts.spotify.com/authorize?' +
-    querystring.stringify({
-      client_id: config.client_id,
-      response_type: 'code',
-      redirect_uri: 'http://localhost:4200/',
-    });
+// Initialize the Spotify API
+const scopes = ['user-read-private', 'user-read-email'];
+const spotifyApi = new SpotifyWebApi({
+  clientId: config.client_id,
+  clientSecret: config.client_secret,
+  redirectUri: 'http://localhost:4200/',
+});
 
+router.get('/auth', function (req, res) {
+  const url = spotifyApi.createAuthorizeURL(scopes, 'enter state here');
   res.send({ redirect: url });
 });
 
 router.post('/token', async function (req, res) {
-  const authorization = Buffer.from(
-    `${config.client_id}:${config.client_secret}`
-  ).toString('base64');
+  try {
+    const data = (await spotifyApi.authorizationCodeGrant(req.body.code)).body;
+    console.log('The token expires in ' + data['expires_in']);
+    console.log('The access token is ' + data['access_token']);
+    console.log('The refresh token is ' + data['refresh_token']);
 
-  await axios({
-    method: 'post',
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${authorization}`,
-    },
-    url: 'https://accounts.spotify.com/api/token',
-    params: {
-      grant_type: 'authorization_code',
-      code: req.body.code,
-      redirect_uri: 'http://localhost:4200/',
-    },
-  })
-    .then((response) => {
-      res.send(response['data']);
-    })
-    .catch((error) => {
-      res.send({ error: 'Access token could not be obtained.' });
-    });
+    // Set the access token on the API object to use it in later calls
+    spotifyApi.setAccessToken(data['access_token']);
+    spotifyApi.setRefreshToken(data['refresh_token']);
+
+    res.send(data);
+  } catch (err) {
+    res.send({ error: err });
+  }
 });
 
 router.get('/test', function (req, res) {
