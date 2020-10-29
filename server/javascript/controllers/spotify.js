@@ -53,35 +53,74 @@ var spotifyApi = new spotify_web_api_node_1.default({
 });
 router.get('/auth', function (req, res) {
     var url = spotifyApi.createAuthorizeURL(scopes, 'enter state here');
+    console.log('trying to redirect to', url);
     res.send({ redirect: url });
 });
-router.post('/token', function (req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var data, err_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, spotifyApi.authorizationCodeGrant(req.body.code)];
-                case 1:
-                    data = (_a.sent()).body;
-                    console.log('The token expires in ' + data['expires_in']);
-                    console.log('The access token is ' + data['access_token']);
-                    console.log('The refresh token is ' + data['refresh_token']);
-                    // Set the access token on the API object to use it in later calls
-                    spotifyApi.setAccessToken(data['access_token']);
-                    spotifyApi.setRefreshToken(data['refresh_token']);
-                    res.send(data);
-                    return [3 /*break*/, 3];
-                case 2:
-                    err_1 = _a.sent();
-                    res.send({ error: err_1 });
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
-            }
-        });
+router.post('/token', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var data, err_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, spotifyApi.authorizationCodeGrant(req.body.code)];
+            case 1:
+                data = (_a.sent()).body;
+                console.log('The token expires in ' + data['expires_in']);
+                console.log('The access token is ' + data['access_token']);
+                console.log('The refresh token is ' + data['refresh_token']);
+                // Set the access token on the API object to use it in later calls
+                spotifyApi.setAccessToken(data['access_token']);
+                spotifyApi.setRefreshToken(data['refresh_token']);
+                res.send(data);
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _a.sent();
+                res.send({ error: err_1 });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
     });
-});
+}); });
+router.get('/refresh-token', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var data, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, spotifyApi.refreshAccessToken()];
+            case 1:
+                data = _a.sent();
+                spotifyApi.setAccessToken(data.body['access_token']);
+                res.send({ response: 'The access token has been refreshed!' });
+                return [3 /*break*/, 3];
+            case 2:
+                err_2 = _a.sent();
+                res.send({ error: err_2 });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.get('/get-self', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, err_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, spotifyApi.getMe()];
+            case 1:
+                user = _a.sent();
+                console.log('got user', user);
+                res.send(user);
+                return [3 /*break*/, 3];
+            case 2:
+                err_3 = _a.sent();
+                res.send({ error: err_3 });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 router.get('/test', function (req, res) {
     res.send('spoofy');
 });

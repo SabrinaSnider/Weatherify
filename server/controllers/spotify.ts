@@ -13,12 +13,13 @@ const spotifyApi = new SpotifyWebApi({
   redirectUri: 'http://localhost:4200/',
 });
 
-router.get('/auth', function (req, res) {
+router.get('/auth', (req, res) => {
   const url = spotifyApi.createAuthorizeURL(scopes, 'enter state here');
+  console.log('trying to redirect to', url);
   res.send({ redirect: url });
 });
 
-router.post('/token', async function (req, res) {
+router.post('/token', async (req, res) => {
   try {
     const data = (await spotifyApi.authorizationCodeGrant(req.body.code)).body;
     console.log('The token expires in ' + data['expires_in']);
@@ -35,7 +36,26 @@ router.post('/token', async function (req, res) {
   }
 });
 
-router.get('/test', function (req, res) {
+router.get('/refresh-token', async (req, res) => {
+  try {
+    const data = await spotifyApi.refreshAccessToken();
+    spotifyApi.setAccessToken(data.body['access_token']);
+    res.send({ response: 'The access token has been refreshed!' });
+  } catch (err) {
+    res.send({ error: err });
+  }
+});
+
+router.get('/get-self', async (req, res) => {
+  try {
+    const user = await spotifyApi.getMe();
+    res.send(user);
+  } catch (err) {
+    res.send({ error: err });
+  }
+});
+
+router.get('/test', (req, res) => {
   res.send('spoofy');
 });
 
